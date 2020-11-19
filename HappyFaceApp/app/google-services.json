@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "69265850707",
+    "firebase_url": "https://happyfaceapp-8f64d.firebaseio.com",
+    "project_id": "happyfaceapp-8f64d",
+    "storage_bucket": "happyfaceapp-8f64d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69265850707:android:6262b6b2b5b7e3291fa1a6",
+        "android_client_info": {
+          "package_name": "com.wgf.happyfaceapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69265850707-ho0noer97l85mfuofirn0v6fhgm33j30.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQY9fRHBjXYIrNbCo6oYYnz-fBu7Y7sWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69265850707-ho0noer97l85mfuofirn0v6fhgm33j30.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
