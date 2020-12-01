@@ -10,21 +10,16 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
-import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.google.mlkit.vision.face.FaceLandmark
-import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -52,9 +47,6 @@ class MainActivity : AppCompatActivity() {
     var mBitmap: Bitmap? = null
     var mResultBitmap: Bitmap? = null
 
-    // 기다리는 팝업창
-    lateinit var waitingDialog: AlertDialog
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -64,12 +56,6 @@ class MainActivity : AppCompatActivity() {
         if (checkPermission(STORAGE_PERMISSION, REQ_PERMISSION_STORAGE)) {
             setViews()
         }
-
-        // "잠시만 기다려 주세용!" 팝업창 코드
-        waitingDialog = SpotsDialog.Builder().setContext(this)
-            .setMessage("당신의 얼굴 표정을 분석 중이에요!!") // TODO - 원하는 메세지로 수정하기!
-            .setCancelable(true)
-            .build()
     }
 
     /**
@@ -98,8 +84,8 @@ class MainActivity : AppCompatActivity() {
      *      Permission(권한) 처리 후 결과를 확인하는 함수
      */
     override fun onRequestPermissionsResult(
-            requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
+            requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
         when (requestCode) {
             REQ_PERMISSION_STORAGE -> {
                 for (grant in grantResults) {
@@ -302,57 +288,10 @@ class MainActivity : AppCompatActivity() {
 
         mResultBitmap = FaceEmojifier.detectFaces(this, bitmap);
         imagePreview.setImageBitmap(mResultBitmap)
-
-        /*// Step 1: create MLKit's VisionImage object
-        val image = InputImage.fromBitmap(bitmap, 0)
-
-        // Step 2: High-accuracy landmark detection and face classification
-        val highAccuracyOpts = FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-            .build()
-
-        val detector = FaceDetection.getClient(highAccuracyOpts)
-
-        val result = detector.process(image)
-            .addOnSuccessListener {
-                    faces ->
-                        for(face in faces) {
-                            var bounds = face.boundingBox
-                            val rotY = face.headEulerAngleY // Head is rotated to the right rotY degrees
-                            val rotZ = face.headEulerAngleZ // Head is tilted sideways rotZ degrees
-
-                            // If landmark detection was enabled (mouth, ears, eyes, cheeks, and
-                            // nose available):
-                            val leftEar = face.getLandmark(FaceLandmark.LEFT_EAR)
-                            leftEar?.let {
-                                val leftEarPos = leftEar.position
-                            }
-
-                            // If classification was enabled:
-                            if (face.smilingProbability != null) {
-                                val smileProb = face.smilingProbability
-                            }
-                            if (face.rightEyeOpenProbability != null) {
-                                val rightEyeOpenProb = face.rightEyeOpenProbability
-                            }
-
-                            // If face tracking was enabled:
-                            if (face.trackingId != null) {
-                                val id = face.trackingId
-                            }
-                        }
-
-            }
-            .addOnFailureListener { e -> showToast(e.message.toString()) }*/
     }
-
 
     private fun processFaceResult(faceResult: List<Face>) {
         Log.d(TAG, ">> processFaceResult()")
-
-
     }
     /**
      * (14) showToast() :
