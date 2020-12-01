@@ -26,7 +26,7 @@ class SplashActivity : AppCompatActivity() {
 
         var splash_background = mFirebaseRemoteConfig!!.getString(getString(R.string.rc_background))
 
-        //19.2.0
+
         var configSettings: FirebaseRemoteConfigSettings = FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.DEBUG)
                 .build();
@@ -34,23 +34,13 @@ class SplashActivity : AppCompatActivity() {
         mFirebaseRemoteConfig!!.setConfigSettings(configSettings)
         mFirebaseRemoteConfig!!.setDefaults(R.xml.remote_config_defaults)
 
-        /* 20.0.1
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-                .setFetchTimeoutInSeconds(0)
-                .setMinimumFetchIntervalInSeconds(0)
-                .build()*/
-
-        /* 20.0.1
-        mFirebaseRemoteConfig!!.setConfigSettingsAsync(configSettings);
-        mFirebaseRemoteConfig!!.setDefaultsAsync(R.xml.remote_config_defaults)*/
-
         // 배경설정
         splash_linear_layout.setBackgroundColor(Color.parseColor(splash_background));
 
-        mFirebaseRemoteConfig!!.fetch()
+        mFirebaseRemoteConfig!!.fetch(0)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    mFirebaseRemoteConfig!!.activate()
+                    mFirebaseRemoteConfig!!.activateFetched()
                     val updated = task.result
                     Log.d(TAG, "Config params updated: $updated")
 

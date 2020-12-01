@@ -41,10 +41,14 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-//    implementation 'com.google.firebase:firebase-config:20.0.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // 원격 배경설정을 위한 Firebase Remote Config
     implementation 'com.google.firebase:firebase-config:19.2.0'
+
+    // 얼굴 검출을 위한 ML Kit FaceDetection
+    implementation 'com.google.mlkit:face-detection:16.0.2'
+
 }

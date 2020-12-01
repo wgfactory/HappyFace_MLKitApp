@@ -3,4 +3,9 @@
     <string name="rc_background">splash_background</string>
     <string name="rc_caps">splash_message_caps</string>
     <string name="rc_message">splash_message</string>
+    <string name="no_faces_message">사진 속에서 얼굴을 찾지 못했어요 ㅠㅠ 다시 한번 시도!</string>
+    <string name="no_emoji">알 수 없는 표정이네요! 다시 한번 시도!</string>
+
+    <string name="banner_ad_unit_id_for_test">ca-app-pub-2662996616807455/2984195338</string>
+
 </resources>
