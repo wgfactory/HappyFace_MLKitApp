@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HappyFaceApp</string>
+    <string name="app_name">웃어봐요</string>
     <string name="rc_background">splash_background</string>
     <string name="rc_caps">splash_message_caps</string>
     <string name="rc_message">splash_message</string>

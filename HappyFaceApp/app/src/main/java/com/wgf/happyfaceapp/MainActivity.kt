@@ -2,7 +2,6 @@ package com.wgf.happyfaceapp
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.Face
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -47,6 +45,12 @@ class MainActivity : AppCompatActivity() {
     var mBitmap: Bitmap? = null
     var mResultBitmap: Bitmap? = null
 
+    /**
+     * 안드로이드 생명주기 첫 실행 함수
+     * (1) onCreate() :
+     *
+     *      어플을 실행하면 가장 첫번째로 호출 되는 함
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -81,7 +85,9 @@ class MainActivity : AppCompatActivity() {
     /**
      * (3) onRequestPermissionsResult() :
      *
-     *      Permission(권한) 처리 후 결과를 확인하는 함수
+     *      Permission(권한) 처리 후 결과를 확인하는 함수수
+     *      카메라, 저장소 권한에 대한 결과 처리 후
+     *      실패가 발생하면 Toast 메세지 출력!
      */
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -114,6 +120,8 @@ class MainActivity : AppCompatActivity() {
      * (4) setViews() :
      *
      *      Permission(권한) 처리 후 버튼 클릭을 대기하는 뷰 함수
+     *      카메라, 갤러리 권한이 획득 성공되면
+     *      시스템 카메라, 갤러리를 open 하는 함수
      */
     fun setViews(){
         Log.d(TAG, ">> setViews()")
@@ -132,6 +140,7 @@ class MainActivity : AppCompatActivity() {
      * (5) openCamera() :
      *
      *      시스템 카메라 앱을 호출하여 수행하는 함수
+     *      실제 안드로이드 폰의 카메라가 실행됨!
      */
     fun openCamera() {
         Log.d(TAG, ">> openCamera()")
@@ -153,6 +162,7 @@ class MainActivity : AppCompatActivity() {
      * (6) openGallery() :
      *
      *      시스템 갤러리 앱을 호출하여 수행하는 함수
+     *      실제 안드로이드 갤러리 앱이 실행됨!
      */
     fun openGallery() {
         Log.d(TAG, ">> openGallery()")
@@ -167,6 +177,8 @@ class MainActivity : AppCompatActivity() {
      * (7) onActivityResult() :
      *
      *      카메라, 갤러리 앱 호출 후 결과를 수행하는 함수
+     *      카메라, 갤러리에서 촬영 및 선택한 사진을 가지고
+     *      FaceDetection 함수 호출!
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -199,6 +211,7 @@ class MainActivity : AppCompatActivity() {
      * (8) createImageUri() :
      *
      *      미디어스토어에 카메라 이미지를 저장할 URI를 미리 생성하는 함수
+     *      카메라에서 촬영된 파일을 처리하는 함수
      */
     fun createImageUri(filename: String, mimeType: String) : Uri? {
         Log.d(TAG, ">> createImageUri()")
@@ -214,6 +227,7 @@ class MainActivity : AppCompatActivity() {
      * (9) newFileName() :
      *
      *      촬영된 사진의 파일 이름을 생성하는 함수
+     *      카메라에서 촬영된 파일을 처리하는 함수
      */
     fun newFileName() : String {
         Log.d(TAG, ">> newFileName()")
@@ -228,6 +242,7 @@ class MainActivity : AppCompatActivity() {
      * (10) loadBitmapFromMedia() :
      *      Camera 촬영으로 얻은 원본 이미지 가져오기
      *      미디어 스토어에서 uri로 이미지 불러오는 함수
+     *      카메라에서 촬영된 파일을 처리하는 함수
      */
     fun loadBitmapFromMediaStoreBy(photoUri: Uri): Bitmap? {
         var image: Bitmap? = null
@@ -247,8 +262,8 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * (11) getCapturedImage():
-     *     Decodes and center crops the captured image from camera.
-     *     Object Detection을 수행하기 전에 이미지 처리를 수행하는 함수
+     *     카메라에서 촬영된 사진을 처리하는 함
+     *     Face Detection을 수행하기 전에 이미지 처리를 수행
      */
     private fun getCapturedImage(imgUri: Uri): Bitmap {
         Log.d(TAG, ">> getCapturedImage()")
@@ -278,23 +293,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * MLKit Object Detection Function
-     * (12) runObjectDetection() :
-     *      MLKit Object Detection Function
-     *      Object Detection을 수행하는 함수
+     * Google Vision API Face Detection For Smile Function
+     * (12) runFaceSmileDetector() :
+     *      Google Vision API를 사용하여 Face Detection
+     *      얼굴 검출 후 Smile 여부를 판단하는 함수
      */
     private fun runFaceSmileDetector(bitmap: Bitmap) {
         Log.d(TAG, ">> runFaceSmileDetector()")
 
         mResultBitmap = FaceEmojifier.detectFaces(this, bitmap);
         imagePreview.setImageBitmap(mResultBitmap)
+
+        // 얼굴 검출 후 스마일 값을 저장하고 TextView에 출력!
+        var smile = FaceEmojifier.mSmileValue
+        smile = smile * 100
+        smileTxt.setText("Smile is " + String.format("%.0f", smile) + "%")
+
+        // 얼굴 검출 후 왼쪽 눈의 오픈 값을 저장하고 TextView에 출력!
+        var leftEye = FaceEmojifier.mLeftEyeValue
+        leftEye = leftEye * 100
+        leftEyeTxt.setText("LeftEye is " + String.format("%.0f", leftEye) + "%")
+
+        // 얼굴 검출 후 오쪽 눈의 오픈 값을 저장하고 TextView에 출력!
+        var rightEye = FaceEmojifier.mRightEyeValue
+        rightEye = rightEye * 100
+        rightEyeTxt.setText("RightEye is " + String.format("%.0f", rightEye) + "%")
+
     }
 
-    private fun processFaceResult(faceResult: List<Face>) {
-        Log.d(TAG, ">> processFaceResult()")
-    }
     /**
-     * (14) showToast() :
+     * (13) showToast() :
      *      Make Toast Function
      *     토스트 메세지 표시 하는 함수
      */

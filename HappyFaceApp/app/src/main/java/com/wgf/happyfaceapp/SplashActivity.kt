@@ -18,6 +18,13 @@ class SplashActivity : AppCompatActivity() {
 
     var mFirebaseRemoteConfig: FirebaseRemoteConfig? = null
 
+    /**
+     * 안드로이드 생명주기 첫 실행 함수
+     * (1) onCreate() :
+     *
+     *      어플을 실행하면 가장 첫번째로 호출 되는 함수
+     *      여기에서는 Firebase에서 원격으로 조정하기 위한 설정을 수행!
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -51,6 +58,13 @@ class SplashActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Firebase Remote Config 값에 따라서 다음 작업을 수행하는 함
+     * (2) displayWelcomeMessage() :
+     *
+     *      Firebase Remote Config의 caps 값이 true(참) 이면 팝업창 표시 후 어플 종료.
+     *      Firebase Remote Config의 caps 값이 false(거짓) 이면 다음 화면인 MainActivity로 전환!
+     */
     fun displayWelcomeMessage() {
         var caps = mFirebaseRemoteConfig!!.getBoolean(getString(R.string.rc_caps))
         var splash_message = mFirebaseRemoteConfig!!.getString(getString(R.string.rc_message))

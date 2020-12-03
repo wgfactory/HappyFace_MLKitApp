@@ -21,6 +21,10 @@ object FaceEmojifier {
     private const val SMILING_PROB_THRESHOLD = 0.15
     private const val EYE_OPEN_PROB_THRESHOLD = 0.5
 
+    public var mSmileValue : Float = 0.0f
+    public var mLeftEyeValue : Float = 0.0f
+    public var mRightEyeValue : Float = 0.0f
+
     fun detectFaces(context: Context, picture: Bitmap): Bitmap {
 
         val detector = FaceDetector.Builder(context)
@@ -44,29 +48,30 @@ object FaceEmojifier {
 
                 when (whichEmoji(face)) {
                     // 스마일
-                    Emoji.SMILE ->
+                    Emoji.SMILE -> {
+                        Log.d(TAG, ">> It's Smile!!")
                         emojiBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.smile)
 
+                    }
                     // 무표정
-                    Emoji.FROWN ->
-                        emojiBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.frown)
-
-                    Emoji.LEFT_WINK ->
-                        emojiBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.leftwink)
-
-                    Emoji.RIGHT_WINK ->
-                        emojiBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.rightwink)
-
-                    Emoji.CLOSED_EYE_SMILE ->
+                    Emoji.FROWN -> {
+                        Log.d(TAG, ">> It's FROWN!!")
+                        emojiBitmap = BitmapFactory . decodeResource (context.resources, R.drawable.frown)
+                    }
+                    // 눈감았지만, 웃는 표정
+                    Emoji.CLOSED_EYE_SMILE -> {
+                        Log.d(TAG, ">> It's Closed Eye But Smile!!")
                         emojiBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.closed_frown)
-
-                    // 알 수 없는 표정
+                    }
+                    // 알 수 없는 표정정 (눈 모두 감은 표정)
                     else ->
                     {
+                        Log.d(TAG, ">> It's Wondering!!")
                         emojiBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.wondering)
                         Toast.makeText(context, R.string.no_emoji, Toast.LENGTH_SHORT).show()
                     }
                 }
+
                 resultBitmap = addBitmapToface(resultBitmap, emojiBitmap, face)
             }
         }
@@ -74,12 +79,17 @@ object FaceEmojifier {
         return resultBitmap
     }
 
-    private fun whichEmoji(face: Face): Emoji { //Log all the probabilities
-        Log.d(TAG, "whichEmoji: smilingProb = " + face.isSmilingProbability)
-        Log.d(TAG, "whichEmoji: leftEyeOpenProb = "
-                + face.isLeftEyeOpenProbability)
-        Log.d(TAG, "whichEmoji: rightEyeOpenProb = "
-                + face.isRightEyeOpenProbability)
+    private fun whichEmoji(face: Face): Emoji {
+
+        //Log all the probabilities
+        Log.d(TAG, ">> whichEmoji(): smilingProb = " + face.isSmilingProbability)
+        Log.d(TAG, ">> whichEmoji(): leftEyeOpenProb = " + face.isLeftEyeOpenProbability)
+        Log.d(TAG, ">> whichEmoji(): rightEyeOpenProb = " + face.isRightEyeOpenProbability)
+
+        // 스마일, 왼쪽, 오른쪽 눈의 확률값 전역 변수에 저장하기
+        mSmileValue = face.isSmilingProbability
+        mLeftEyeValue = face.isLeftEyeOpenProbability
+        mRightEyeValue = face.isRightEyeOpenProbability
 
         val smiling = face.isSmilingProbability > SMILING_PROB_THRESHOLD
         val leftEyeClosed = face.isLeftEyeOpenProbability < EYE_OPEN_PROB_THRESHOLD
@@ -113,7 +123,7 @@ object FaceEmojifier {
             }
         }
         // Log the chosen Emoji
-        Log.d(TAG, "whichEmoji: " + emoji.name)
+        Log.d(TAG, ">> whichEmoji: " + emoji.name)
 
         // return the chosen Emoji
         return emoji
